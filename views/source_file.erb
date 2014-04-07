@@ -1,23 +1,37 @@
+<% if !missed_only or source_file.covered_percent < 100 %>
 <div class="source_table" id="<%= id source_file %>">
   <div class="header">
     <h3><%= shortened_filename source_file %></h3>
     <h4><span class="<%= coverage_css_class(source_file.covered_percent) %>"><%= source_file.covered_percent.round(2).to_s %> %</span> covered</h4>
     <div>
-      <b><%= source_file.lines_of_code %></b> relevant lines. 
+      <b><%= source_file.lines_of_code %></b> relevant lines.
       <span class="green"><b><%= source_file.covered_lines.count %></b> lines covered</span> and
       <span class="red"><b><%= source_file.missed_lines.count %></b> lines missed.</span>
     </div>
   </div>
-  
+
   <pre>
     <ol>
+      <% @new_section = true %>
       <% source_file.lines.each_with_index do |line| %>
+       <% if !missed_only or (missed_only and line.status == 'missed')
+         @new_section = true
+       %>
         <li class="<%= line.status %>" data-hits="<%= line.coverage ? line.coverage : '' %>" data-linenumber="<%= line.number %>">
           <% if line.covered? %><span class="hits"><%= line.coverage %></span><% end %>
           <% if line.skipped? %><span class="hits">skipped</span><% end %>
           <code class="ruby"><%= CGI.escapeHTML(line.src.chomp) %></code>
         </li>
+        <% else %>
+        <% if @new_section
+             @new_section = false
+        %>
+        <li style="visibility: hidden; padding: 0; height: 2px"></li>
+        <% end %>
+        <li style="visibility: hidden; padding: 0; height: 0"></li>
+        <% end %>
       <% end %>
     </ol>
   </pre>
 </div>
+<% end %>

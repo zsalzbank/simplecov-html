@@ -18,6 +18,9 @@ class SimpleCov::Formatter::HTMLFormatter
     File.open(File.join(output_path, "index.html"), "w+") do |file|
       file.puts template('layout').result(binding)
     end
+    File.open(File.join(output_path, "missed.html"), "w+") do |file|
+      file.puts template('missed').result(binding)
+    end
     puts output_message(result)
   end
 
@@ -48,7 +51,7 @@ class SimpleCov::Formatter::HTMLFormatter
   end
 
   # Returns the html for the given source_file
-  def formatted_source_file(source_file)
+  def formatted_source_file(source_file, missed_only=false)
     template('source_file').result(binding)
   end
 
